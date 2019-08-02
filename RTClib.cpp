@@ -944,17 +944,20 @@ bool RTC_DS3231::lostPower(void) {
 */
 /**************************************************************************/
 void RTC_DS3231::adjust(const DateTime& dt) {
+  
+  uint8_t hourbyte = 0x01F & bin2bcd(dt.hour()); //new code 
+  hourbyte= hourbyte | (((dt.hourmode()==0)?0:1)<<6);  
+  if(dt.hourmode()==1){    
+    hourbyte = hourbyte | (0<<5);
+  } 
+  if(dt.hourmode()==2){    
+    hourbyte = hourbyte | (1<<5);
+  } 
   Wire.beginTransmission(DS3231_ADDRESS);
   Wire._I2C_WRITE((byte)0); // start at location 0
   Wire._I2C_WRITE(bin2bcd(dt.second()));
-  Wire._I2C_WRITE(bin2bcd(dt.minute()));   
-  uint8_t hourbyte = bin2bcd(dt.hour()); //new code 
-  hourbyte= hourbyte | (dt.hourmode()<<6);  
-  if(dt.hourmode()>0){    
-    hourbyte=| (dt.amorpm()<<5);
-  }  
+  Wire._I2C_WRITE(bin2bcd(dt.minute())); 
   Wire._I2C_WRITE(hourbyte); //end of new code
-  Wire._I2C_WRITE(bin2bcd(dt.hour()));
   Wire._I2C_WRITE(bin2bcd(0));
   Wire._I2C_WRITE(bin2bcd(dt.day()));
   Wire._I2C_WRITE(bin2bcd(dt.month()));
@@ -980,7 +983,19 @@ DateTime RTC_DS3231::now() {
   Wire.requestFrom(DS3231_ADDRESS, 7);
   uint8_t ss = bcd2bin(Wire._I2C_READ() & 0x7F);
   uint8_t mm = bcd2bin(Wire._I2C_READ());
-  uint8_t hh = bcd2bin(Wire._I2C_READ());
+  uint8_t hourbyte = Wire._I2C_READ();
+  uint8_t hh=0;
+  uint8_t hourmode=0;
+  if(hourbyte & 0x20){
+       hourmode=1;
+       if(hourbyte & 0x10){
+          hourmode=2;
+       }
+       hh = bcd2bin(hourbyte & 0x0f);
+  else{
+       hourmode=0;
+       hh = bcd2bin(hourbyte);
+   } 
   Wire._I2C_READ();
   uint8_t d = bcd2bin(Wire._I2C_READ());
   uint8_t m = bcd2bin(Wire._I2C_READ());
