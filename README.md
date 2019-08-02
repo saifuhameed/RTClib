@@ -2,6 +2,13 @@
 
 This is a fork of JeeLab's fantastic real time clock library for Arduino.
 
+##########################################################
+Codes added by Saifudheen Abdul Hameed
+Date: 02/08/2019
+Purpose of this fork is to add 12 Hour / 24 Hour format
+Real usage case for Alarm timer with relay drivers.
+##########################################################
+
 For details on using this library with an RTC module like the DS1307, PCF8523, or DS3231, see the guide at: https://learn.adafruit.com/ds1307-real-time-clock-breakout-board-kit/overview
 
 Works great with Adafruit RTC breakouts:
