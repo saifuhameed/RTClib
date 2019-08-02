@@ -409,12 +409,13 @@ bool DateTime::operator==(const DateTime& right) const {
 /**************************************************************************/
 String DateTime::timestamp(timestampOpt opt){
   char buffer[20];
-
+  // (hourmode==1)?12:0 ; TODO AM/PM
+  
   //Generate timestamp according to opt
   switch(opt){
     case TIMESTAMP_TIME:
     //Only time
-    sprintf(buffer, "%02d:%02d:%02d", hh, mm, ss);
+    sprintf(buffer, "%02d:%02d:%02d", hh , mm, ss);
     break;
     case TIMESTAMP_DATE:
     //Only date
@@ -422,7 +423,7 @@ String DateTime::timestamp(timestampOpt opt){
     break;
     default:
     //Full
-    sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000+yOff, m, d, hh, mm, ss);
+    sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000+yOff, m, d, hh , mm, ss);
   }
   return String(buffer);
 }
