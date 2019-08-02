@@ -3,7 +3,7 @@
 This is a fork of JeeLab's fantastic real time clock library for Arduino.
 
 ##########################################################<br />
-Codes added by Saifudheen Abdul Hameed<br />
+Additional codes added by Saifudheen Abdul Hameed<br />
 Date: 02/08/2019
 Purpose of this fork is to add 12 Hour / 24 Hour format<br />
 Real usage case for Alarm timer with relay drivers.<br />
