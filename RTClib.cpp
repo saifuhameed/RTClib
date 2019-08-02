@@ -175,9 +175,10 @@ DateTime::DateTime (uint32_t t) {
     @param hour 0-23
     @param min 0-59
     @param sec 0-59
+    @param _ampm 0-2
 */
 /**************************************************************************/
-DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec) {
+DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec, uint8_t _ampm) {
     if (year >= 2000)
         year -= 2000;
     yOff = year;
@@ -185,7 +186,8 @@ DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uin
     d = day;
     hh = hour;
     mm = min;
-    ss = sec;
+    ss = sec;    
+    ampm = _ampm;
 }
 
 /**************************************************************************/
@@ -200,7 +202,8 @@ DateTime::DateTime (const DateTime& copy):
   d(copy.d),
   hh(copy.hh),
   mm(copy.mm),
-  ss(copy.ss)
+  ss(copy.ss),  
+  ampm(copy.ampm)
 {}
 
 /**************************************************************************/
@@ -226,11 +229,14 @@ static uint8_t conv2d(const char* p) {
 */
 /**************************************************************************/
 DateTime::DateTime (const char* date, const char* time) {
-    // sample input: date = "Dec 26 2009", time = "12:34:56"
+    // sample input: date = "Dec 26 2009", 
+    // time = "12:34:56" //indirect 24 hours mode  //edit by Saifudheen , 8 chractors
+    // time = "14:18:25" //explicit 24 hours mode  //edit by Saifudheen , 8 chractors    
+    // time = "12:34:56pm" //explicit 12 hour mode //edit by Saifudheen , 10  charactors, space before am/pm NOT supported and will default to 24 hour mode
     yOff = conv2d(date + 9);
     // Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
     switch (date[0]) {
-        case 'J': m = (date[1] == 'a') ? 1 : ((date[2] == 'n') ? 6 : 7); break;
+        case 'J': m = (date[1] == 'a' ) ? 1 : ((date[2] == 'n' ) ? 6 : 7); break;
         case 'F': m = 2; break;
         case 'A': m = date[2] == 'r' ? 4 : 8; break;
         case 'M': m = date[2] == 'r' ? 3 : 5; break;
@@ -242,7 +248,19 @@ DateTime::DateTime (const char* date, const char* time) {
     d = conv2d(date + 4);
     hh = conv2d(time);
     mm = conv2d(time + 3);
-    ss = conv2d(time + 6);
+    ss = conv2d(time + 6);   
+     
+    if(len(time)>8){
+      if(time[8]=='a' || time[8]=='A'){        
+        ampm=1;
+      }else if(time[8]=='p' || time[8]=='P'){        
+        ampm=2;        
+      }else{        
+        ampm=0;   //24 hour mode     
+      }
+    }else{       
+       ampm=0;     //24 hour mode     
+    }
 }
 
 /**************************************************************************/
@@ -275,6 +293,17 @@ DateTime::DateTime (const __FlashStringHelper* date, const __FlashStringHelper* 
     hh = conv2d(buff);
     mm = conv2d(buff + 3);
     ss = conv2d(buff + 6);
+      if(len(buff)>8){
+      if(buff[8]=='a' || buff[8]=='A'){        
+        ampm=1;
+      }else if(buff[8]=='p' || buff[8]=='P'){        
+        ampm=2;        
+      }else{        
+        ampm=0;   //24 hour mode     
+      }
+    }else{       
+       ampm=0;     //24 hour mode     
+    }
 }
 
 /**************************************************************************/
@@ -512,12 +541,18 @@ uint8_t RTC_DS1307::isrunning(void) {
 */
 /**************************************************************************/
 void RTC_DS1307::adjust(const DateTime& dt) {
+  uint8_t hourbyte=0;
   Wire.beginTransmission(DS1307_ADDRESS);
   Wire._I2C_WRITE((byte)0); // start at location 0
   Wire._I2C_WRITE(bin2bcd(dt.second()));
   Wire._I2C_WRITE(bin2bcd(dt.minute()));
-  Wire._I2C_WRITE(bin2bcd(dt.hour()));
-  Wire._I2C_WRITE(bin2bcd(0));
+  hourbyte = bin2bcd(dt.hour()); //new code 
+  hourbyte=| (dt.hourmode()<<6);  
+  if(dt.hourmode()>0){    
+    hourbyte=| (dt.amorpm()<<5);
+  }                              
+  Wire._I2C_WRITE(hourbyte); //end of new code
+  Wire._I2C_WRITE(bin2bcd(0)); //weekday written zero ??????? CHECK WHY
   Wire._I2C_WRITE(bin2bcd(dt.day()));
   Wire._I2C_WRITE(bin2bcd(dt.month()));
   Wire._I2C_WRITE(bin2bcd(dt.year() - 2000));
@@ -760,7 +795,13 @@ boolean RTC_PCF8523::initialized(void) {
 */
 /**************************************************************************/
 void RTC_PCF8523::adjust(const DateTime& dt) {
+  Wire.requestFrom(PCF8523_ADDRESS, 1);
+  uint8_t control_1 = Wire._I2C_READ();
+  if (dt.hourmode()==0){
+    control_1=| (((dt.hourmode()==0)?0:1) <<3);
+  }
   Wire.beginTransmission(PCF8523_ADDRESS);
+  Wire._I2C_WRITE((byte)control_1);
   Wire._I2C_WRITE((byte)3); // start at location 3
   Wire._I2C_WRITE(bin2bcd(dt.second()));
   Wire._I2C_WRITE(bin2bcd(dt.minute()));
