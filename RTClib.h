@@ -53,7 +53,7 @@ class DateTime {
 public:
   DateTime (uint32_t t = SECONDS_FROM_1970_TO_2000);
   DateTime (uint16_t year, uint8_t month, uint8_t day,
-              uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0);
+              uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0, uint8_t hmode = 0, uint8_t ampm = 0 );
   DateTime (const DateTime& copy);
   DateTime (const char* date, const char* time);
   DateTime (const __FlashStringHelper* date, const __FlashStringHelper* time);
@@ -88,6 +88,19 @@ public:
       @return uint8_t seconds
   */
   uint8_t second() const      { return ss; }
+  
+    /*!
+      @brief  Return Hour Mode
+      @return uint8_t hourmode  12Hour =1, 24 Hour =0
+  */
+  uint8_t hourmode() const      { return hm; }
+  
+    /*!
+      @brief  Return AM/ PM, this value is irrelevant if hourmode=0
+      @return uint8_t ampm AM=0, PM=1
+  */
+  uint8_t ampm() const      { return ampm; }
+  
 
   uint8_t dayOfTheWeek() const;
 
@@ -139,9 +152,11 @@ protected:
   uint8_t yOff;   ///< Year offset from 2000
   uint8_t m;      ///< Month 1-12
   uint8_t d;      ///< Day 1-31
-  uint8_t hh;     ///< Hours 0-23
+  uint8_t hh;     ///< Hours 0-23 or 1 -12
   uint8_t mm;     ///< Minutes 0-59
   uint8_t ss;     ///< Seconds 0-59
+  uint8_t hm;     /// 1=12 Hour Mode, 0=24 Hour mode
+  uint8_t ampm;     /// 1=pm, 0=am
 };
 
 
