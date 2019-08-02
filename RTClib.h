@@ -53,7 +53,7 @@ class DateTime {
 public:
   DateTime (uint32_t t = SECONDS_FROM_1970_TO_2000);
   DateTime (uint16_t year, uint8_t month, uint8_t day,
-              uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0, uint8_t _amorpm = 0 ); //_amorpm 0=24 hour mode, 1=am, 2=pm
+              uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0, uint8_t _hm = 0 ); //_hourmode 0=24 hour mode, 1=am, 2=pm
   DateTime (const DateTime& copy);
   DateTime (const char* date, const char* time);
   DateTime (const __FlashStringHelper* date, const __FlashStringHelper* time);
@@ -93,14 +93,9 @@ public:
       @brief  Return Hour Mode
       @return uint8_t hourmode  12Hour =1, 24 Hour =0
   */
-  uint8_t hourmode() const      { return (ampm==0)?0:1); }
+  uint8_t hourmode() const      { return hm; }
   
-    /*!
-      @brief  Return am/pm, this value is irrelevant if hourmode=0 (or ampm=0)
-      @return uint8_t ampm am=1, pm=2
-  */
-  uint8_t amorpm() const      { return ampm; }
-  
+ 
 
   uint8_t dayOfTheWeek() const;
 
@@ -155,7 +150,7 @@ protected:
   uint8_t hh;     ///< Hours 0-23 or 1 -12
   uint8_t mm;     ///< Minutes 0-59
   uint8_t ss;     ///< Seconds 0-59 
-  uint8_t ampm;     /// 0=24 hour mode, 1=am, 2=pm
+  uint8_t hm;     /// 0=24 hour mode, 1=am, 2=pm
 };
 
 
