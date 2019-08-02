@@ -541,16 +541,20 @@ uint8_t RTC_DS1307::isrunning(void) {
 */
 /**************************************************************************/
 void RTC_DS1307::adjust(const DateTime& dt) {
-  uint8_t hourbyte=0;
-  hourbyte = 0x01F & bin2bcd(dt.hour()); //new code 
   
-  hourbyte= hourbyte | (((dt.hourmode()==0)?0:1)<<6);  
-  if(dt.hourmode()==1){    
-    hourbyte = hourbyte | (0<<5);
-  } 
-  if(dt.hourmode()==2){    
-    hourbyte = hourbyte | (1<<5);
-  } 
+  uint8_t hourbyte = 0x01F & bin2bcd(dt.hour()); //new code 
+  swith(dt.hourmode()){
+    case 0: //24 hours
+        hourbyte &= ~(0x01 << 6);
+        break;
+    case 1: //am
+        hourbyte &= ~(0x01 << 5);
+        hourbyte |= (0x01<<6);
+        break;
+    case 2: //pm
+        hourbyte |= (0x60);       
+  }
+   
   Wire.beginTransmission(DS1307_ADDRESS);
   Wire._I2C_WRITE((byte)0); // start at location 0
   Wire._I2C_WRITE(bin2bcd(dt.second()));
@@ -947,13 +951,18 @@ bool RTC_DS3231::lostPower(void) {
 void RTC_DS3231::adjust(const DateTime& dt) {
   
   uint8_t hourbyte = 0x01F & bin2bcd(dt.hour()); //new code 
-  hourbyte= hourbyte | (((dt.hourmode()==0)?0:1)<<6);  
-  if(dt.hourmode()==1){    
-    hourbyte = hourbyte | (0<<5);
-  } 
-  if(dt.hourmode()==2){    
-    hourbyte = hourbyte | (1<<5);
-  } 
+  swith(dt.hourmode()){
+    case 0: //24 hours
+        hourbyte &= ~(0x01 << 6);
+        break;
+    case 1: //am
+        hourbyte &= ~(0x01 << 5);
+        hourbyte |= (0x01<<6);
+        break;
+    case 2: //pm
+        hourbyte |= (0x60);       
+  }
+   
   Wire.beginTransmission(DS3231_ADDRESS);
   Wire._I2C_WRITE((byte)0); // start at location 0
   Wire._I2C_WRITE(bin2bcd(dt.second()));
