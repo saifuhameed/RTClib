@@ -581,16 +581,17 @@ DateTime RTC_DS1307::now() {
   uint8_t hourbyte = Wire._I2C_READ();
   uint8_t hh=0;
   uint8_t hourmode=0;
-  if(hourbyte & 0x20){
-       hourmode=1;
-       if(hourbyte & 0x10){
-         hourmode=2;
-       }
-       hh = bcd2bin(hourbyte & 0x0f);
-  else{
-       hourmode=0;
-       hh = bcd2bin(hourbyte);
-   }
+  uint8_t ctbytes = hourbyte & 0x30;
+  switch (ctbytes){
+    case 2 : //12 hrs AM/PM
+    case 3:
+      hourmode = ctbytes-1; 
+      hh = bcd2bin(hourbyte & 0x1f);
+      break;
+    case else: //24 hrs
+      hourmode = 0;
+      hh = bcd2bin(hourbyte & 0x3f);
+  }
  
   Wire._I2C_READ();
   uint8_t d = bcd2bin(Wire._I2C_READ());
@@ -986,22 +987,24 @@ DateTime RTC_DS3231::now() {
   uint8_t hourbyte = Wire._I2C_READ();
   uint8_t hh=0;
   uint8_t hourmode=0;
-  if(hourbyte & 0x20){
-       hourmode=1;
-       if(hourbyte & 0x10){
-          hourmode=2;
-       }
-       hh = bcd2bin(hourbyte & 0x0f);
-  else{
-       hourmode=0;
-       hh = bcd2bin(hourbyte);
-   } 
+  uint8_t ctbytes = hourbyte & 0x30;
+  switch (ctbytes){
+    case 2 : //12 hrs AM/PM
+    case 3:
+      hourmode = ctbytes-1; 
+      hh = bcd2bin(hourbyte & 0x1f);
+      break;
+    case else: //24 hrs
+      hourmode = 0;
+      hh = bcd2bin(hourbyte & 0x3f);
+  }
+  
   Wire._I2C_READ();
   uint8_t d = bcd2bin(Wire._I2C_READ());
   uint8_t m = bcd2bin(Wire._I2C_READ());
   uint16_t y = bcd2bin(Wire._I2C_READ()) + 2000;
 
-  return DateTime (y, m, d, hh, mm, ss);
+  return DateTime (y, m, d, hh, mm, ss, hourmode);
 }
 
 /**************************************************************************/
