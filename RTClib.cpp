@@ -147,6 +147,7 @@ DateTime::DateTime (uint32_t t) {
   mm = t % 60;
   t /= 60;
   hh = t % 24;
+  hourmode=0; //24 hour mode is set by default
   uint16_t days = t / 24;
   uint8_t leap;
   for (yOff = 0; ; ++yOff) {
@@ -326,7 +327,14 @@ uint8_t DateTime::dayOfTheWeek() const {
 uint32_t DateTime::unixtime(void) const {
   uint32_t t;
   uint16_t days = date2days(yOff, m, d);
-  t = time2long(days, hh, mm, ss);
+  uint8_t hhm=hh;
+  if(hourmode==1 && hh==12){
+    hhm=0;
+  }
+  if(hourmode==2 ){
+    if(hh!=12)hhm=hh+12;
+  }
+  t = time2long(days, hhm, mm, ss);
   t += SECONDS_FROM_1970_TO_2000;  // seconds from 1970 to 2000
 
   return t;
@@ -341,7 +349,14 @@ uint32_t DateTime::unixtime(void) const {
 long DateTime::secondstime(void) const {
   long t;
   uint16_t days = date2days(yOff, m, d);
-  t = time2long(days, hh, mm, ss);
+  uint8_t hhm=hh;
+  if(hourmode==1 && hh==12){
+    hhm=0;
+  }
+  if(hourmode==2 ){
+    if(hh!=12)hhm=hh+12;
+  }
+  t = time2long(days, hhm, mm, ss);
   return t;
 }
 
@@ -410,12 +425,18 @@ bool DateTime::operator==(const DateTime& right) const {
 String DateTime::timestamp(timestampOpt opt){
   char buffer[20];
   // (hourmode==1)?12:0 ; TODO AM/PM
-  
+  uint8_t hhm=hh;
+  if(hourmode==1 && hh==12){ // 12:AM
+    hhm=0;
+  }
+  if(hourmode==2 ){ //PM
+    if(hh!=12)hhm=hh+12;
+  }
   //Generate timestamp according to opt
   switch(opt){
     case TIMESTAMP_TIME:
     //Only time
-    sprintf(buffer, "%02d:%02d:%02d", hh , mm, ss);
+    sprintf(buffer, "%02d:%02d:%02d", hhm , mm, ss);
     break;
     case TIMESTAMP_DATE:
     //Only date
@@ -423,7 +444,7 @@ String DateTime::timestamp(timestampOpt opt){
     break;
     default:
     //Full
-    sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000+yOff, m, d, hh , mm, ss);
+    sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000+yOff, m, d, hhm , mm, ss); //time stamp as per ISO standard no AM/PM
   }
   return String(buffer);
 }
