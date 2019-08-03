@@ -175,10 +175,10 @@ DateTime::DateTime (uint32_t t) {
     @param hour 0-23
     @param min 0-59
     @param sec 0-59
-    @param _ampm 0-2
+    @param _hourmode 0-2
 */
 /**************************************************************************/
-DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec, uint8_t _ampm) {
+DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t min, uint8_t sec, uint8_t _hourmode) {
     if (year >= 2000)
         year -= 2000;
     yOff = year;
@@ -187,7 +187,7 @@ DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uin
     hh = hour;
     mm = min;
     ss = sec;    
-    ampm = _ampm;
+    hourmode = _hourmode;
 }
 
 /**************************************************************************/
@@ -203,7 +203,7 @@ DateTime::DateTime (const DateTime& copy):
   hh(copy.hh),
   mm(copy.mm),
   ss(copy.ss),  
-  ampm(copy.ampm)
+  hourmode(copy.hourmode)
 {}
 
 /**************************************************************************/
@@ -252,14 +252,14 @@ DateTime::DateTime (const char* date, const char* time) {
      
     if(len(time)>8){
       if(time[8]=='a' || time[8]=='A'){        
-        ampm=1;
+        hourmode=1;
       }else if(time[8]=='p' || time[8]=='P'){        
-        ampm=2;        
+        hourmode=2;        
       }else{        
-        ampm=0;   //24 hour mode     
+        hourmode=0;   //24 hour mode     
       }
     }else{       
-       ampm=0;     //24 hour mode     
+       hourmode=0;     //24 hour mode     
     }
 }
 
@@ -295,14 +295,14 @@ DateTime::DateTime (const __FlashStringHelper* date, const __FlashStringHelper* 
     ss = conv2d(buff + 6);
       if(len(buff)>8){
       if(buff[8]=='a' || buff[8]=='A'){        
-        ampm=1;
+        hourmode=1;
       }else if(buff[8]=='p' || buff[8]=='P'){        
-        ampm=2;        
+        hourmode=2;        
       }else{        
-        ampm=0;   //24 hour mode     
+        hourmode=0;   //24 hour mode     
       }
     }else{       
-       ampm=0;     //24 hour mode     
+       hourmode=0;     //24 hour mode     
     }
 }
 
