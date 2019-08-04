@@ -147,7 +147,7 @@ DateTime::DateTime (uint32_t t) {
   mm = t % 60;
   t /= 60;
   hh = t % 24;
-  hm=0; //24 hour mode is set by default
+  hmd=0; //24 hour mode is set by default
   uint16_t days = t / 24;
   uint8_t leap;
   for (yOff = 0; ; ++yOff) {
@@ -188,7 +188,7 @@ DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uin
     hh = hour;
     mm = min;
     ss = sec;    
-    hm = _hourmode;
+    hmd = _hourmode;
 }
 
 /**************************************************************************/
@@ -204,7 +204,7 @@ DateTime::DateTime (const DateTime& copy):
   hh(copy.hh),
   mm(copy.mm),
   ss(copy.ss),  
-  hm(copy.hm)
+  hmd(copy.hmd)
 {}
 
 /**************************************************************************/
@@ -253,14 +253,14 @@ DateTime::DateTime (const char* date, const char* time) {
      
     if(len(time)>8){
       if(time[8]=='a' || time[8]=='A'){        
-        hm=1;
+        hmd=1;
       }else if(time[8]=='p' || time[8]=='P'){        
-        hm=2;        
+        hmd=2;        
       }else{        
-        hm=0;   //24 hour mode     
+        hmd=0;   //24 hour mode     
       }
     }else{       
-       hm=0;     //24 hour mode     
+       hmd=0;     //24 hour mode     
     }
 }
 
@@ -296,14 +296,14 @@ DateTime::DateTime (const __FlashStringHelper* date, const __FlashStringHelper* 
     ss = conv2d(buff + 6);
       if(len(buff)>8){
       if(buff[8]=='a' || buff[8]=='A'){        
-        hm=1;
+        hmd=1;
       }else if(buff[8]=='p' || buff[8]=='P'){        
-        hm=2;        
+        hmd=2;        
       }else{        
-        hm=0;   //24 hour mode     
+        hmd=0;   //24 hour mode     
       }
     }else{       
-       hm=0;     //24 hour mode     
+       hmd=0;     //24 hour mode     
     }
 }
 
@@ -327,14 +327,14 @@ uint8_t DateTime::dayOfTheWeek() const {
 uint32_t DateTime::unixtime(void) const {
   uint32_t t;
   uint16_t days = date2days(yOff, m, d);
-  uint8_t _hm=hh;
-  if(hm==1 && hh==12){
-    _hm=0;
+  uint8_t _hh=hh;
+  if(hmd==1 && hh==12){
+    _hh=0;
   }
-  if(hm==2 ){
-    if(hh!=12)_hm=hh+12;
+  if(hmd==2 ){
+    if(hh!=12)_hh=hh+12;
   }
-  t = time2long(days, _hm, mm, ss);
+  t = time2long(days, _hh, mm, ss);
   t += SECONDS_FROM_1970_TO_2000;  // seconds from 1970 to 2000
 
   return t;
@@ -349,14 +349,14 @@ uint32_t DateTime::unixtime(void) const {
 long DateTime::secondstime(void) const {
   long t;
   uint16_t days = date2days(yOff, m, d);
-  uint8_t _hm=hh;
-  if(hm==1 && hh==12){
-    _hm=0;
+  uint8_t _hh=hh;
+  if(hmd==1 && hh==12){
+    _hh=0;
   }
-  if(hm==2 ){
-    if(hh!=12)_hm=hh+12;
+  if(hmd==2 ){
+    if(hh!=12)_hh=hh+12;
   }
-  t = time2long(days,_hm, mm, ss);
+  t = time2long(days,_hh, mm, ss);
   return t;
 }
 
@@ -426,10 +426,10 @@ String DateTime::timestamp(timestampOpt opt){
   char buffer[20];
   // (hourmode==1)?12:0 ; TODO AM/PM
   uint8_t _hh=hh;
-  if(hm==1 && hh==12){ // 12:AM
+  if(hmd==1 && hh==12){ // 12:AM
     _hh=0;
   }
-  if(hm==2 ){ //PM
+  if(hmd==2 ){ //PM
     if(hh!=12)_hh=hh+12;
   }
   //Generate timestamp according to opt
