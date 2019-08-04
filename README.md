@@ -1,4 +1,4 @@
-# Adafruit RTClib [![Build Status](https://travis-ci.com/adafruit/RTClib.svg?branch=master)](https://travis-ci.com/adafruit/RTClib)
+# Adafruit RTClibEx [![Build Status](https://travis-ci.com/adafruit/RTClib.svg?branch=master)](https://travis-ci.com/adafruit/RTClib)
 
 This is a fork of JeeLab's fantastic real time clock library for Arduino.
 
