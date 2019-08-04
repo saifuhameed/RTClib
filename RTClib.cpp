@@ -1025,7 +1025,7 @@ DateTime RTC_DS3231::now() {
       _hourmode = ctbytes-1; 
       hh = bcd2bin(hourbyte & 0x1f);
       break;
-    case else: //24 hrs
+    default: //24 hrs
       _hourmode = 0;
       hh = bcd2bin(hourbyte & 0x3f);
   }
