@@ -147,7 +147,7 @@ DateTime::DateTime (uint32_t t) {
   mm = t % 60;
   t /= 60;
   hh = t % 24;
-  hourmode=0; //24 hour mode is set by default
+  hm=0; //24 hour mode is set by default
   uint16_t days = t / 24;
   uint8_t leap;
   for (yOff = 0; ; ++yOff) {
@@ -253,14 +253,14 @@ DateTime::DateTime (const char* date, const char* time) {
      
     if(len(time)>8){
       if(time[8]=='a' || time[8]=='A'){        
-        hourmode=1;
+        hm=1;
       }else if(time[8]=='p' || time[8]=='P'){        
-        hourmode=2;        
+        hm=2;        
       }else{        
-        hourmode=0;   //24 hour mode     
+        hm=0;   //24 hour mode     
       }
     }else{       
-       hourmode=0;     //24 hour mode     
+       hm=0;     //24 hour mode     
     }
 }
 
@@ -296,14 +296,14 @@ DateTime::DateTime (const __FlashStringHelper* date, const __FlashStringHelper* 
     ss = conv2d(buff + 6);
       if(len(buff)>8){
       if(buff[8]=='a' || buff[8]=='A'){        
-        hourmode=1;
+        hm=1;
       }else if(buff[8]=='p' || buff[8]=='P'){        
-        hourmode=2;        
+        hm=2;        
       }else{        
-        hourmode=0;   //24 hour mode     
+        hm=0;   //24 hour mode     
       }
     }else{       
-       hourmode=0;     //24 hour mode     
+       hm=0;     //24 hour mode     
     }
 }
 
@@ -328,10 +328,10 @@ uint32_t DateTime::unixtime(void) const {
   uint32_t t;
   uint16_t days = date2days(yOff, m, d);
   uint8_t hhm=hh;
-  if(hourmode==1 && hh==12){
+  if(hm==1 && hh==12){
     hhm=0;
   }
-  if(hourmode==2 ){
+  if(hm==2 ){
     if(hh!=12)hhm=hh+12;
   }
   t = time2long(days, hhm, mm, ss);
@@ -350,10 +350,10 @@ long DateTime::secondstime(void) const {
   long t;
   uint16_t days = date2days(yOff, m, d);
   uint8_t hhm=hh;
-  if(hourmode==1 && hh==12){
+  if(hm==1 && hh==12){
     hhm=0;
   }
-  if(hourmode==2 ){
+  if(hm==2 ){
     if(hh!=12)hhm=hh+12;
   }
   t = time2long(days, hhm, mm, ss);
@@ -426,10 +426,10 @@ String DateTime::timestamp(timestampOpt opt){
   char buffer[20];
   // (hourmode==1)?12:0 ; TODO AM/PM
   uint8_t hhm=hh;
-  if(hourmode==1 && hh==12){ // 12:AM
+  if(hm==1 && hh==12){ // 12:AM
     hhm=0;
   }
-  if(hourmode==2 ){ //PM
+  if(hm==2 ){ //PM
     if(hh!=12)hhm=hh+12;
   }
   //Generate timestamp according to opt
@@ -606,16 +606,16 @@ DateTime RTC_DS1307::now() {
   uint8_t mm = bcd2bin(Wire._I2C_READ());
   uint8_t hourbyte = Wire._I2C_READ();
   uint8_t hh=0;
-  uint8_t hourmode=0;
+  uint8_t hhm=0;
   uint8_t ctbytes = hourbyte & 0x30;
   switch (ctbytes){
     case 2 : //12 hrs AM/PM
     case 3:
-      hourmode = ctbytes-1; 
+      hhm = ctbytes-1; 
       hh = bcd2bin(hourbyte & 0x1f);
       break;
     case else: //24 hrs
-      hourmode = 0;
+      hhm = 0;
       hh = bcd2bin(hourbyte & 0x3f);
   }
  
@@ -624,7 +624,7 @@ DateTime RTC_DS1307::now() {
   uint8_t m = bcd2bin(Wire._I2C_READ());
   uint16_t y = bcd2bin(Wire._I2C_READ()) + 2000;
 
-  return DateTime (y, m, d, hh, mm, ss, hourmode);
+  return DateTime (y, m, d, hh, mm, ss, hhm);
 }
 
 /**************************************************************************/
@@ -1017,16 +1017,16 @@ DateTime RTC_DS3231::now() {
   uint8_t mm = bcd2bin(Wire._I2C_READ());
   uint8_t hourbyte = Wire._I2C_READ();
   uint8_t hh=0;
-  uint8_t hourmode=0;
+  uint8_t hhm=0;
   uint8_t ctbytes = hourbyte & 0x30;
   switch (ctbytes){
     case 2 : //12 hrs AM/PM
     case 3:
-      hourmode = ctbytes-1; 
+      hhm = ctbytes-1; 
       hh = bcd2bin(hourbyte & 0x1f);
       break;
     case else: //24 hrs
-      hourmode = 0;
+      hhm = 0;
       hh = bcd2bin(hourbyte & 0x3f);
   }
   
@@ -1035,7 +1035,7 @@ DateTime RTC_DS3231::now() {
   uint8_t m = bcd2bin(Wire._I2C_READ());
   uint16_t y = bcd2bin(Wire._I2C_READ()) + 2000;
 
-  return DateTime (y, m, d, hh, mm, ss, hourmode);
+  return DateTime (y, m, d, hh, mm, ss, hhm);
 }
 
 /**************************************************************************/
