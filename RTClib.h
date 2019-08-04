@@ -58,6 +58,44 @@ public:
   DateTime (const char* date, const char* time);
   DateTime (const __FlashStringHelper* date, const __FlashStringHelper* time);
 
+   /*!
+      @brief  Sets the year, stored as an offset from 2000, year less than 2000 not supported
+      @return void
+  */
+  void setYear(uint16_t year)       { if(year<2000)year=2000;  yOff = year - 2000;}
+  /*!
+      @brief  sets month
+      @return void
+  */
+  void setMonth(uint8_t month)       {  m = month; }
+  /*!
+      @brief  sets day
+      @return void
+  */
+  void setDay(uint8_t day)          {  d = day; }
+  /*!
+      @brief  sets hours
+      @return void
+  */
+  void setHour(uint8_t hour)         {   hh = hour; }
+  /*!
+      @brief  sets minutes
+      @return void
+  */
+  void setMinute(uint8_t minute)       {   mm = minute; }
+  /*!
+      @brief  sets seconds
+      @return void
+  */
+  void setSecond(uint8_t second)       {   ss = second; }
+  
+    /*!
+      @brief  sets Hour Mode, 0 = 24 Hour Mode, 1 = 12 Mode AM, 2 = 12 Hour Mode PM
+      @return void   
+  */
+  void setHourMode(uint8_t _hourmode)       { hourmode = _hourmode; }
+  
+  
   /*!
       @brief  Return the year, stored as an offset from 2000
       @return uint16_t year
