@@ -24,7 +24,6 @@ setHour	KEYWORD2
 setMinute	KEYWORD2
 setSecond	KEYWORD2
 setHourMode KEYWORD2
-setDayOfTheWeek	KEYWORD2
 
 getYear	KEYWORD2
 getmonth	KEYWORD2
