@@ -565,7 +565,7 @@ uint8_t RTC_DS1307::isrunning(void) {
 void RTC_DS1307::adjust(const DateTime& dt) {
   
   uint8_t hourbyte = 0x01F & bin2bcd(dt.hour()); //new code 
-  swith(dt.hourmode()){
+  switch(dt.hourmode()){
     case 0: //24 hours
         hourbyte &= ~(0x01 << 6);
         break;
