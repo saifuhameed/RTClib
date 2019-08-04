@@ -188,7 +188,7 @@ DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uin
     hh = hour;
     mm = min;
     ss = sec;    
-    hourmode = _hourmode;
+    hm = _hourmode;
 }
 
 /**************************************************************************/
@@ -204,7 +204,7 @@ DateTime::DateTime (const DateTime& copy):
   hh(copy.hh),
   mm(copy.mm),
   ss(copy.ss),  
-  hourmode(copy.hourmode)
+  hm(copy.hm)
 {}
 
 /**************************************************************************/
@@ -327,14 +327,14 @@ uint8_t DateTime::dayOfTheWeek() const {
 uint32_t DateTime::unixtime(void) const {
   uint32_t t;
   uint16_t days = date2days(yOff, m, d);
-  uint8_t hhm=hh;
+  uint8_t _hm=hh;
   if(hm==1 && hh==12){
-    hhm=0;
+    _hm=0;
   }
   if(hm==2 ){
-    if(hh!=12)hhm=hh+12;
+    if(hh!=12)_hm=hh+12;
   }
-  t = time2long(days, hhm, mm, ss);
+  t = time2long(days, _hm, mm, ss);
   t += SECONDS_FROM_1970_TO_2000;  // seconds from 1970 to 2000
 
   return t;
@@ -349,14 +349,14 @@ uint32_t DateTime::unixtime(void) const {
 long DateTime::secondstime(void) const {
   long t;
   uint16_t days = date2days(yOff, m, d);
-  uint8_t hhm=hh;
+  uint8_t _hm=hh;
   if(hm==1 && hh==12){
-    hhm=0;
+    _hm=0;
   }
   if(hm==2 ){
-    if(hh!=12)hhm=hh+12;
+    if(hh!=12)_hm=hh+12;
   }
-  t = time2long(days, hhm, mm, ss);
+  t = time2long(days,_hm, mm, ss);
   return t;
 }
 
@@ -425,18 +425,18 @@ bool DateTime::operator==(const DateTime& right) const {
 String DateTime::timestamp(timestampOpt opt){
   char buffer[20];
   // (hourmode==1)?12:0 ; TODO AM/PM
-  uint8_t hhm=hh;
+  uint8_t _hh=hh;
   if(hm==1 && hh==12){ // 12:AM
-    hhm=0;
+    _hh=0;
   }
   if(hm==2 ){ //PM
-    if(hh!=12)hhm=hh+12;
+    if(hh!=12)_hh=hh+12;
   }
   //Generate timestamp according to opt
   switch(opt){
     case TIMESTAMP_TIME:
     //Only time
-    sprintf(buffer, "%02d:%02d:%02d", hhm , mm, ss);
+    sprintf(buffer, "%02d:%02d:%02d", _hh , mm, ss);
     break;
     case TIMESTAMP_DATE:
     //Only date
@@ -444,7 +444,7 @@ String DateTime::timestamp(timestampOpt opt){
     break;
     default:
     //Full
-    sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000+yOff, m, d, hhm , mm, ss); //time stamp as per ISO standard no AM/PM
+    sprintf(buffer, "%d-%02d-%02dT%02d:%02d:%02d", 2000+yOff, m, d, _hh , mm, ss); //time stamp as per ISO standard no AM/PM
   }
   return String(buffer);
 }
@@ -606,16 +606,16 @@ DateTime RTC_DS1307::now() {
   uint8_t mm = bcd2bin(Wire._I2C_READ());
   uint8_t hourbyte = Wire._I2C_READ();
   uint8_t hh=0;
-  uint8_t hhm=0;
+  uint8_t _hourmode=0;
   uint8_t ctbytes = hourbyte & 0x30;
   switch (ctbytes){
     case 2 : //12 hrs AM/PM
     case 3:
-      hhm = ctbytes-1; 
+      _hourmode = ctbytes-1; 
       hh = bcd2bin(hourbyte & 0x1f);
       break;
     case else: //24 hrs
-      hhm = 0;
+      _hourmode = 0;
       hh = bcd2bin(hourbyte & 0x3f);
   }
  
@@ -624,7 +624,7 @@ DateTime RTC_DS1307::now() {
   uint8_t m = bcd2bin(Wire._I2C_READ());
   uint16_t y = bcd2bin(Wire._I2C_READ()) + 2000;
 
-  return DateTime (y, m, d, hh, mm, ss, hhm);
+  return DateTime (y, m, d, hh, mm, ss, _hourmode);
 }
 
 /**************************************************************************/
@@ -1017,16 +1017,16 @@ DateTime RTC_DS3231::now() {
   uint8_t mm = bcd2bin(Wire._I2C_READ());
   uint8_t hourbyte = Wire._I2C_READ();
   uint8_t hh=0;
-  uint8_t hhm=0;
+  uint8_t _hourmode=0;
   uint8_t ctbytes = hourbyte & 0x30;
   switch (ctbytes){
     case 2 : //12 hrs AM/PM
     case 3:
-      hhm = ctbytes-1; 
+      _hourmode = ctbytes-1; 
       hh = bcd2bin(hourbyte & 0x1f);
       break;
     case else: //24 hrs
-      hhm = 0;
+      _hourmode = 0;
       hh = bcd2bin(hourbyte & 0x3f);
   }
   
@@ -1035,7 +1035,7 @@ DateTime RTC_DS3231::now() {
   uint8_t m = bcd2bin(Wire._I2C_READ());
   uint16_t y = bcd2bin(Wire._I2C_READ()) + 2000;
 
-  return DateTime (y, m, d, hh, mm, ss, hhm);
+  return DateTime (y, m, d, hh, mm, ss, _hourmode);
 }
 
 /**************************************************************************/
