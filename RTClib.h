@@ -111,7 +111,7 @@ public:
     TIMESTAMP_TIME, // HH:MM:SS
     TIMESTAMP_DATE  // YYYY-MM-DD
   };
-  String timestamp(timestampOpt opt = TIMESTAMP_FULL);
+  String getTimeStamp(timestampOpt opt = TIMESTAMP_FULL);
 
   DateTime operator+(const TimeSpan& span);
   DateTime operator-(const TimeSpan& span);
