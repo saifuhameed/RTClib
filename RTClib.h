@@ -53,7 +53,7 @@ class DateTime {
 public:
   DateTime (uint32_t t = SECONDS_FROM_1970_TO_2000);
   DateTime (uint16_t year, uint8_t month, uint8_t day,
-              uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0, uint8_t _hm = 0 ); //_hourmode 0=24 hour mode, 1=am, 2=pm
+              uint8_t hour = 0, uint8_t min = 0, uint8_t sec = 0, uint8_t _hourmode = 0 ); //_hourmode 0=24 hour mode, 1=am, 2=pm
   DateTime (const DateTime& copy);
   DateTime (const char* date, const char* time);
   DateTime (const __FlashStringHelper* date, const __FlashStringHelper* time);
@@ -62,48 +62,48 @@ public:
       @brief  Return the year, stored as an offset from 2000
       @return uint16_t year
   */
-  uint16_t year() const       { return 2000 + yOff; }
+  uint16_t getYear() const       { return 2000 + yOff; }
   /*!
       @brief  Return month
       @return uint8_t month
   */
-  uint8_t month() const       { return m; }
+  uint8_t getMonth() const       { return m; }
   /*!
       @brief  Return day
       @return uint8_t day
   */
-  uint8_t day() const         { return d; }
+  uint8_t getDay() const         { return d; }
   /*!
       @brief  Return hours
       @return uint8_t hours
   */
-  uint8_t hour() const        { return hh; }
+  uint8_t getHour() const        { return hh; }
   /*!
       @brief  Return minutes
       @return uint8_t minutes
   */
-  uint8_t minute() const      { return mm; }
+  uint8_t getMinute() const      { return mm; }
   /*!
       @brief  Return seconds
       @return uint8_t seconds
   */
-  uint8_t second() const      { return ss; }
+  uint8_t getSecond() const      { return ss; }
   
     /*!
       @brief  Return Hour Mode
       @return uint8_t hourmode  12Hour =1, 24 Hour =0
   */
-  uint8_t hourmode() const      { return hm; }
+  uint8_t getHourMode() const      { return hourmode; }
   
  
 
-  uint8_t dayOfTheWeek() const;
+  uint8_t getDayOfTheWeek() const;
 
   /** 32-bit times as seconds since 1/1/2000 */
-  long secondstime() const;
+  long getSecondsTime() const;
 
   /** 32-bit times as seconds since 1/1/1970 */
-  uint32_t unixtime(void) const;
+  uint32_t getUnixTime(void) const;
 
   /** ISO 8601 Timestamp function */
   enum timestampOpt{
@@ -150,7 +150,7 @@ protected:
   uint8_t hh;     ///< Hours 0-23 or 1 -12
   uint8_t mm;     ///< Minutes 0-59
   uint8_t ss;     ///< Seconds 0-59 
-  uint8_t hm;     /// 0=24 hour mode, 1=am, 2=pm
+  uint8_t hourmode;     /// 0=24 hour mode, 1=am, 2=pm
 };
 
 
