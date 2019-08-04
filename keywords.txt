@@ -17,15 +17,25 @@ Ds1307SqwPinMode	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+setYear	KEYWORD2
+setmonth	KEYWORD2
+setDay	KEYWORD2
+setHour	KEYWORD2
+setMinute	KEYWORD2
+setSecond	KEYWORD2
+setHourMode KEYWORD2
+setDayOfTheWeek	KEYWORD2
+
 getYear	KEYWORD2
 getmonth	KEYWORD2
 getDay	KEYWORD2
 getHour	KEYWORD2
 getMinute	KEYWORD2
 getSecond	KEYWORD2
+getHourMode KEYWORD2
 getDayOfTheWeek	KEYWORD2
-getSecondstime	KEYWORD2
-getUnixtime	KEYWORD2
+getSecondsTime	KEYWORD2
+getUnixTime	KEYWORD2
 begin	KEYWORD2
 adjust	KEYWORD2
 adjustDrift	KEYWORD2
