@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*!
-  @file     RTClib.h
+  @file     RTClibEx.h
 
   Original library by JeeLabs http://news.jeelabs.org/code/, released to the public domain
 
@@ -17,8 +17,8 @@
 */
 /**************************************************************************/
 
-#ifndef _RTCLIB_H_
-#define _RTCLIB_H_
+#ifndef _RTCLIBEX_H_
+#define _RTCLIBEX_H_
 
 #include <Arduino.h>
 class TimeSpan;
@@ -36,7 +36,7 @@ class TimeSpan;
 #define DS3231_ADDRESS        0x68  ///< I2C address for DS3231
 #define DS3231_CONTROL        0x0E  ///< Control register
 #define DS3231_STATUSREG      0x0F  ///< Status register
-#define DS3231_TEMPERATUREREG	0x11  ///< Temperature register (high byte - low byte is at 0x12), 10-bit temperature value
+#define DS3231_TEMPERATUREREG 0x11  ///< Temperature register (high byte - low byte is at 0x12), 10-bit temperature value
 
 /** Constants */
 #define SECONDS_PER_DAY       86400L  ///< 60 * 60 * 24
@@ -77,7 +77,8 @@ public:
       @brief  sets hours
       @return void
   */
-  void setHour(uint8_t hour)         {   hh = hour; }
+  void setHour(uint8_t hour)         {  hh = hour;
+  }
   /*!
       @brief  sets minutes
       @return void
@@ -388,4 +389,4 @@ protected:
   static uint32_t lastMicros;       ///< micros() value corresponding to the last full second of Unix time
 };
 
-#endif // _RTCLIB_H_
+#endif // _RTCLIBEX_H_
