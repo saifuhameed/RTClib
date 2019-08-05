@@ -30,7 +30,7 @@
 #include <Wire.h>
 #endif
 
-#include "RTClib.h"
+#include "RTClibEx.h"
 #ifdef __AVR__
  #include <avr/pgmspace.h>
 #elif defined(ESP8266)
