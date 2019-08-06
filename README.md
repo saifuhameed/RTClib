@@ -7,6 +7,7 @@ Additional codes added by Saifudheen Abdul Hameed<br />
 Date: 02/08/2019
 Purpose of this fork is to support 12/24 Hour format<br />
 Real usage case for Alarm timer with relay drivers.<br />
+Testing with DS3221 and DS1307 are pending, planned to complete in 10/08/2019
 ##########################################################
 
 For details on using this library with an RTC module like the DS1307, PCF8523, or DS3231, see the guide at: https://learn.adafruit.com/ds1307-real-time-clock-breakout-board-kit/overview
